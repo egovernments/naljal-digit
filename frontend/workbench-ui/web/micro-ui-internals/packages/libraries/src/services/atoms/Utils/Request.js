@@ -68,7 +68,9 @@ export const Request = async ({
   multipartData = {},
   reqTimestamp = false,
 }) => {
-  url = `/assam${url}`;
+  url = window?.location?.href.includes('localhost')
+  ? `${url}` // Running locally
+  : `/${Digit.InitEnvironment.getStatePath}${url}`;
   const ts = new Date().getTime();
   if (method.toUpperCase() === "POST") {
    

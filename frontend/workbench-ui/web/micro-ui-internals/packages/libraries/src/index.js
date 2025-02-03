@@ -16,6 +16,7 @@ import { LoginService } from "./services/elements/Login";
 import { PGRService } from "./services/elements/PGR";
 import { PaymentService } from "./services/elements/Payment";
 import * as dateUtils from "./services/atoms/Utils/Date";
+import { InitializeEnvironment } from "./services/atoms/Utils/Environment";
 import Download from "./services/atoms/Download";
 import { WorkflowService } from "./services/elements/WorkFlow";
 import { MdmsService } from "./services/elements/MDMS";
@@ -49,7 +50,6 @@ const initLibraries = () => {
   setupLibraries("PersistantStorage", PersistantStorage);
   setupLibraries("UserService", UserService);
   setupLibraries("ULBService", ULBService);
-
   setupLibraries("Config", { mergeConfig });
   setupLibraries("Services", { useStore });
   setupLibraries("Enums", Enums);
@@ -62,6 +62,7 @@ const initLibraries = () => {
   setupLibraries("HRMSService", HrmsService);
   setupLibraries("PaymentService", PaymentService);
   setupLibraries("DateUtils", dateUtils);
+  setupLibraries("InitEnvironment", InitializeEnvironment);
   setupLibraries("WorkflowService", WorkflowService);
   setupLibraries("MDMSService", MdmsService);
   setupLibraries("UploadServices", UploadServices);
