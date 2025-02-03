@@ -18,7 +18,7 @@ ENV REACT_APP_PUBLIC_PATH=${REACT_APP_PUBLIC_PATH}
 RUN cd web/ \
     &&  ./install-deps.sh \
     && yarn install \
-    && && REACT_APP_PUBLIC_PATH=${REACT_APP_PUBLIC_PATH} yarn build:webpack 
+    && REACT_APP_PUBLIC_PATH=${REACT_APP_PUBLIC_PATH} yarn build:webpack 
 
 FROM nginx:mainline-alpine
 #FROM ghcr.io/egovernments/nginx:mainline-alpine
