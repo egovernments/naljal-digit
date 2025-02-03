@@ -69,9 +69,6 @@ public class WorkflowConfig {
     @Value("${persister.update.businessservice.wf.topic}")
     private String updateBusinessServiceTopic;
 
-    @Value("${repalce.schema.text}")
-    private String replaceString;
-
 
 
     //MDMS
@@ -107,7 +104,8 @@ public class WorkflowConfig {
     @Value("${is.environment.central.instance}")
     private Boolean isEnvironmentCentralInstance;
 
-
+    @Value("${repalce.schema.text}")
+    private String replaceString;
 
 
 }
