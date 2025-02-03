@@ -594,7 +594,9 @@ public class PropertyValidator {
 				&& null == criteria.getName()
 				&& null == criteria.getDoorNo()
 				&& null == criteria.getOldPropertyId();
-		
+
+		log.info("property serarch criteria"+criteria);
+		log.info("is criteria emplty"+isCriteriaEmpty);
 		if (isUserCitizen) {
 			criteria.setIsCitizen(true);
 			
@@ -605,7 +607,8 @@ public class PropertyValidator {
 		}
 		
 		else {
-			
+			log.info("is criteria emplty"+isCriteriaEmpty);
+			log.info("property serarch criteria"+criteria);
 			if(criteria.getTenantId() == null)
 				throw new CustomException("EG_PT_INVALID_SEARCH"," TenantId is mandatory for search by " + userType);
 			
