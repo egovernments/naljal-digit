@@ -29,7 +29,7 @@ module.exports = {
   output: {
     filename: "[name].bundle.js",
     path: path.resolve(__dirname, "build"),
-    publicPath: `/${process.env['REACT_APP_PUBLIC_PATH']}/workbench-ui/`, // Use runtime public path,
+    publicPath: `/${process.env['REACT_APP_PUBLIC_PATH']}/core-ui/`, // Use runtime public path,
   },
   optimization: {
     splitChunks: {
