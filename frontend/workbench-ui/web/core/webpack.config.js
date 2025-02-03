@@ -29,7 +29,7 @@ module.exports = {
   output: {
     filename: "[name].bundle.js",
     path: path.resolve(__dirname, "build"),
-    publicPath: "/assam/core-ui/",
+    publicPath: "/uat/core-ui/",
   },
   optimization: {
     splitChunks: {
