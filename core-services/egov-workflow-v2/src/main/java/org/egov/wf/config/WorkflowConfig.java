@@ -69,6 +69,9 @@ public class WorkflowConfig {
     @Value("${persister.update.businessservice.wf.topic}")
     private String updateBusinessServiceTopic;
 
+    @Value("${repalce.schema.text}")
+    private String replaceString;
+
 
 
     //MDMS
