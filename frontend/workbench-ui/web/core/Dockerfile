@@ -6,6 +6,10 @@ ARG WORK_DIR
 WORKDIR /app
 ENV NODE_OPTIONS "--max-old-space-size=4792"
 
+# Accept the build argument
+ARG REACT_APP_PUBLIC_PATH
+ENV REACT_APP_PUBLIC_PATH=${REACT_APP_PUBLIC_PATH}
+
 COPY ${WORK_DIR} .
 RUN ls -lah
 
@@ -17,7 +21,7 @@ RUN cd web/ \
     &&  ./install-deps.sh \
     && cd ../ \
     && yarn install \ 
-    && yarn build:webpack 
+    && REACT_APP_PUBLIC_PATH=${REACT_APP_PUBLIC_PATH} yarn build:webpack 
 
 FROM nginx:mainline-alpine
 #FROM ghcr.io/egovernments/nginx:mainline-alpine
