@@ -117,7 +117,7 @@ public class EditNotificationService {
 				}
 			});
 		}
-		if(message != null) {
+		if(!message.isEmpty() || message != null) {
 			Map<String, String> mobileNumberAndMessage = workflowNotificationService
 					.getMessageForMobileNumber(mobileNumbersAndNames, waterConnectionRequest, message, property, additionalDetailsMap);
 			Set<String> mobileNumbers = mobileNumberAndMessage.keySet().stream().collect(Collectors.toSet());

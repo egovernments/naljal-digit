@@ -316,7 +316,7 @@ public class WorkflowNotificationService {
 		Map<String, String> attributes = new HashMap<>();
 		for (Entry<String, String> mobileAndName : mobileNumbersAndNames.entrySet()) {
 			String messageToReplace = message;
-			if (messageToReplace.isEmpty()) {
+			if (!messageToReplace.isEmpty()) {
 				if (messageToReplace.contains("{ownername}")) {
 					messageToReplace = messageToReplace.replace("{ownername}", mobileAndName.getValue());
 					attributes.put("{ownername}", mobileAndName.getValue());
