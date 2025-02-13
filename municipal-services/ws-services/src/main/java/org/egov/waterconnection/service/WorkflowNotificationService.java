@@ -316,113 +316,115 @@ public class WorkflowNotificationService {
 		Map<String, String> attributes = new HashMap<>();
 		for (Entry<String, String> mobileAndName : mobileNumbersAndNames.entrySet()) {
 			String messageToReplace = message;
-			if (!messageToReplace.isEmpty()) {
-				if (messageToReplace.contains("{ownername}")) {
-					messageToReplace = messageToReplace.replace("{ownername}", mobileAndName.getValue());
-					attributes.put("{ownername}", mobileAndName.getValue());
-				}
-				if (messageToReplace.contains("{consumercode}")) {
-					messageToReplace = messageToReplace.replace("{consumercode}", waterConnectionRequest.getWaterConnection().getConnectionNo());
-					attributes.put("{consumercode}", waterConnectionRequest.getWaterConnection().getConnectionNo());
-				}
-				if (messageToReplace.contains("<Service>")) {
-					messageToReplace = messageToReplace.replace("<Service>", WCConstants.SERVICE_FIELD_VALUE_NOTIFICATION);
-					attributes.put("<Service>", WCConstants.SERVICE_FIELD_VALUE_NOTIFICATION);
-				}
-				if (messageToReplace.contains("<Plumber Info>"))
-					messageToReplace = getMessageForPlumberInfo(waterConnectionRequest.getWaterConnection(), messageToReplace, attributes);
-
-				if (messageToReplace.contains("<SLA>")) {
-					messageToReplace = messageToReplace.replace("<SLA>", getSLAForState(waterConnectionRequest, property, config.getBusinessServiceValue()));
-					attributes.put("<SLA>", getSLAForState(waterConnectionRequest, property, config.getBusinessServiceValue()));
-				}
-
-				if (messageToReplace.contains("<GPWSC>")) {
-					messageToReplace = messageToReplace.replace("<GPWSC>", property.getTenantId());
-					attributes.put("<GPWSC>", property.getTenantId());
-				}
-
-				if (messageToReplace.contains("<Application number>")) {
-					messageToReplace = messageToReplace.replace("<Application number>", waterConnectionRequest.getWaterConnection().getApplicationNo());
-					attributes.put("<Application number>", waterConnectionRequest.getWaterConnection().getApplicationNo());
-				}
-
-				if (messageToReplace.contains("<Application download link>")) {
-					messageToReplace = messageToReplace.replace("<Application download link>",
-							waterServiceUtil.getShortnerURL(getApplicationDownloadLink(waterConnectionRequest, property)));
-					attributes.put("<Application download link>",
-							waterServiceUtil.getShortnerURL(getApplicationDownloadLink(waterConnectionRequest, property)));
-				}
-
-				if (messageToReplace.contains("<mseva URL>")) {
-					messageToReplace = messageToReplace.replace("<mseva URL>",
-							waterServiceUtil.getShortnerURL(config.getNotificationUrl()));
-					attributes.put("<mseva URL>",
-							waterServiceUtil.getShortnerURL(config.getNotificationUrl()));
-				}
-
-				if (messageToReplace.contains("<mseva app link>")) {
-					messageToReplace = messageToReplace.replace("<mseva app link>",
-							waterServiceUtil.getShortnerURL(config.getMSevaAppLink()));
-					attributes.put("<mseva app link>",
-							waterServiceUtil.getShortnerURL(config.getMSevaAppLink()));
-				}
-
-				if (messageToReplace.contains("<Consumer Id>")) {
-					messageToReplace = messageToReplace.replace("<Consumer Id>",
-							waterConnectionRequest.getWaterConnection().getApplicationNo());
-					attributes.put("<Consumer Id>",
-							waterConnectionRequest.getWaterConnection().getApplicationNo());
-				}
-
-				if (messageToReplace.contains("<View History Link>")) {
-					String historyLink = config.getNotificationUrl() + config.getViewHistoryLink();
-					historyLink = historyLink.replace(mobileNoReplacer, mobileAndName.getKey());
-					historyLink = historyLink.replace(applicationNumberReplacer, waterConnectionRequest.getWaterConnection().getApplicationNo());
-					historyLink = historyLink.replace(tenantIdReplacer, property.getTenantId());
-					messageToReplace = messageToReplace.replace("<View History Link>",
-							waterServiceUtil.getShortnerURL(historyLink));
-					attributes.put("<View History Link>",
-							waterServiceUtil.getShortnerURL(historyLink));
-				}
-				if (messageToReplace.contains("<payment link>")) {
-					String paymentLink = config.getNotificationUrl() + config.getApplicationPayLink();
-					paymentLink = paymentLink.replace(mobileNoReplacer, mobileAndName.getKey());
-					paymentLink = paymentLink.replace(consumerCodeReplacer, waterConnectionRequest.getWaterConnection().getApplicationNo());
-					paymentLink = paymentLink.replace(tenantIdReplacer, property.getTenantId());
-					messageToReplace = messageToReplace.replace("<payment link>",
-							waterServiceUtil.getShortnerURL(paymentLink));
-					attributes.put("<payment link>",
-							waterServiceUtil.getShortnerURL(paymentLink));
-				}
-
-				if (messageToReplace.contains("<connection details page>")) {
-					String connectionDetaislLink = config.getNotificationUrl() + config.getConnectionDetailsLink();
-					connectionDetaislLink = connectionDetaislLink.replace(connectionNoReplacer,
-							waterConnectionRequest.getWaterConnection().getConnectionNo());
-					connectionDetaislLink = connectionDetaislLink.replace(tenantIdReplacer,
-							property.getTenantId());
-					messageToReplace = messageToReplace.replace("<connection details page>",
-							waterServiceUtil.getShortnerURL(connectionDetaislLink));
-					attributes.put("<connection details page>",
-							waterServiceUtil.getShortnerURL(connectionDetaislLink));
-				}
-				if (messageToReplace.contains("<Date effective from>")) {
-					if (waterConnectionRequest.getWaterConnection().getDateEffectiveFrom() != null) {
-						LocalDate date = Instant
-								.ofEpochMilli(waterConnectionRequest.getWaterConnection().getDateEffectiveFrom() > 10
-										? waterConnectionRequest.getWaterConnection().getDateEffectiveFrom()
-										: waterConnectionRequest.getWaterConnection().getDateEffectiveFrom() * 1000)
-								.atZone(ZoneId.systemDefault()).toLocalDate();
-						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-						messageToReplace = messageToReplace.replace("<Date effective from>", date.format(formatter));
-						attributes.put("<Date effective from>", date.format(formatter));
-					} else {
-						messageToReplace = messageToReplace.replace("<Date effective from>", "");
-						attributes.put("<Date effective from>", "");
+			if(messageToReplace != null ) {
+				if (!messageToReplace.isEmpty()) {
+					if (messageToReplace.contains("{ownername}")) {
+						messageToReplace = messageToReplace.replace("{ownername}", mobileAndName.getValue());
+						attributes.put("{ownername}", mobileAndName.getValue());
 					}
+					if (messageToReplace.contains("{consumercode}")) {
+						messageToReplace = messageToReplace.replace("{consumercode}", waterConnectionRequest.getWaterConnection().getConnectionNo());
+						attributes.put("{consumercode}", waterConnectionRequest.getWaterConnection().getConnectionNo());
+					}
+					if (messageToReplace.contains("<Service>")) {
+						messageToReplace = messageToReplace.replace("<Service>", WCConstants.SERVICE_FIELD_VALUE_NOTIFICATION);
+						attributes.put("<Service>", WCConstants.SERVICE_FIELD_VALUE_NOTIFICATION);
+					}
+					if (messageToReplace.contains("<Plumber Info>"))
+						messageToReplace = getMessageForPlumberInfo(waterConnectionRequest.getWaterConnection(), messageToReplace, attributes);
+
+					if (messageToReplace.contains("<SLA>")) {
+						messageToReplace = messageToReplace.replace("<SLA>", getSLAForState(waterConnectionRequest, property, config.getBusinessServiceValue()));
+						attributes.put("<SLA>", getSLAForState(waterConnectionRequest, property, config.getBusinessServiceValue()));
+					}
+
+					if (messageToReplace.contains("<GPWSC>")) {
+						messageToReplace = messageToReplace.replace("<GPWSC>", property.getTenantId());
+						attributes.put("<GPWSC>", property.getTenantId());
+					}
+
+					if (messageToReplace.contains("<Application number>")) {
+						messageToReplace = messageToReplace.replace("<Application number>", waterConnectionRequest.getWaterConnection().getApplicationNo());
+						attributes.put("<Application number>", waterConnectionRequest.getWaterConnection().getApplicationNo());
+					}
+
+					if (messageToReplace.contains("<Application download link>")) {
+						messageToReplace = messageToReplace.replace("<Application download link>",
+								waterServiceUtil.getShortnerURL(getApplicationDownloadLink(waterConnectionRequest, property)));
+						attributes.put("<Application download link>",
+								waterServiceUtil.getShortnerURL(getApplicationDownloadLink(waterConnectionRequest, property)));
+					}
+
+					if (messageToReplace.contains("<mseva URL>")) {
+						messageToReplace = messageToReplace.replace("<mseva URL>",
+								waterServiceUtil.getShortnerURL(config.getNotificationUrl()));
+						attributes.put("<mseva URL>",
+								waterServiceUtil.getShortnerURL(config.getNotificationUrl()));
+					}
+
+					if (messageToReplace.contains("<mseva app link>")) {
+						messageToReplace = messageToReplace.replace("<mseva app link>",
+								waterServiceUtil.getShortnerURL(config.getMSevaAppLink()));
+						attributes.put("<mseva app link>",
+								waterServiceUtil.getShortnerURL(config.getMSevaAppLink()));
+					}
+
+					if (messageToReplace.contains("<Consumer Id>")) {
+						messageToReplace = messageToReplace.replace("<Consumer Id>",
+								waterConnectionRequest.getWaterConnection().getApplicationNo());
+						attributes.put("<Consumer Id>",
+								waterConnectionRequest.getWaterConnection().getApplicationNo());
+					}
+
+					if (messageToReplace.contains("<View History Link>")) {
+						String historyLink = config.getNotificationUrl() + config.getViewHistoryLink();
+						historyLink = historyLink.replace(mobileNoReplacer, mobileAndName.getKey());
+						historyLink = historyLink.replace(applicationNumberReplacer, waterConnectionRequest.getWaterConnection().getApplicationNo());
+						historyLink = historyLink.replace(tenantIdReplacer, property.getTenantId());
+						messageToReplace = messageToReplace.replace("<View History Link>",
+								waterServiceUtil.getShortnerURL(historyLink));
+						attributes.put("<View History Link>",
+								waterServiceUtil.getShortnerURL(historyLink));
+					}
+					if (messageToReplace.contains("<payment link>")) {
+						String paymentLink = config.getNotificationUrl() + config.getApplicationPayLink();
+						paymentLink = paymentLink.replace(mobileNoReplacer, mobileAndName.getKey());
+						paymentLink = paymentLink.replace(consumerCodeReplacer, waterConnectionRequest.getWaterConnection().getApplicationNo());
+						paymentLink = paymentLink.replace(tenantIdReplacer, property.getTenantId());
+						messageToReplace = messageToReplace.replace("<payment link>",
+								waterServiceUtil.getShortnerURL(paymentLink));
+						attributes.put("<payment link>",
+								waterServiceUtil.getShortnerURL(paymentLink));
+					}
+
+					if (messageToReplace.contains("<connection details page>")) {
+						String connectionDetaislLink = config.getNotificationUrl() + config.getConnectionDetailsLink();
+						connectionDetaislLink = connectionDetaislLink.replace(connectionNoReplacer,
+								waterConnectionRequest.getWaterConnection().getConnectionNo());
+						connectionDetaislLink = connectionDetaislLink.replace(tenantIdReplacer,
+								property.getTenantId());
+						messageToReplace = messageToReplace.replace("<connection details page>",
+								waterServiceUtil.getShortnerURL(connectionDetaislLink));
+						attributes.put("<connection details page>",
+								waterServiceUtil.getShortnerURL(connectionDetaislLink));
+					}
+					if (messageToReplace.contains("<Date effective from>")) {
+						if (waterConnectionRequest.getWaterConnection().getDateEffectiveFrom() != null) {
+							LocalDate date = Instant
+									.ofEpochMilli(waterConnectionRequest.getWaterConnection().getDateEffectiveFrom() > 10
+											? waterConnectionRequest.getWaterConnection().getDateEffectiveFrom()
+											: waterConnectionRequest.getWaterConnection().getDateEffectiveFrom() * 1000)
+									.atZone(ZoneId.systemDefault()).toLocalDate();
+							DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+							messageToReplace = messageToReplace.replace("<Date effective from>", date.format(formatter));
+							attributes.put("<Date effective from>", date.format(formatter));
+						} else {
+							messageToReplace = messageToReplace.replace("<Date effective from>", "");
+							attributes.put("<Date effective from>", "");
+						}
+					}
+					messageToReturn.put(mobileAndName.getKey(), messageToReplace);
 				}
-				messageToReturn.put(mobileAndName.getKey(), messageToReplace);
 			}
 		}
 		additionalDetailsMap.put("attributes", attributes);
