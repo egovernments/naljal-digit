@@ -345,57 +345,97 @@ class CommonProvider with ChangeNotifier {
     CoreRepository().fileDownload(context, store.url!);
   }
 
-  void shareonwatsapp(FileStore store, mobileNumber, input) async {
-    if (store.url == null) return;
-    late html.AnchorElement anchorElement;
-    try {
-      var res = await CoreRepository().urlShotner(store.url as String);
-      if (kIsWeb) {
-        if (mobileNumber == null) {
-          anchorElement = new html.AnchorElement(
-              href: "https://wa.me/send?text=" +
-                  input.toString().replaceFirst('{link}', res!));
-        } else {
-          anchorElement = new html.AnchorElement(
-              href: "https://wa.me/+91$mobileNumber?text=" +
-                  input.toString().replaceFirst('{link}', res!));
-        }
 
-        anchorElement.target = "_blank";
-        anchorElement.click();
-      } else {
-        var link;
-        if (mobileNumber == null) {
-          final FlutterShareMe flutterShareMe = FlutterShareMe();
-          var response = await flutterShareMe.shareToWhatsApp(
-                  msg: input.toString().replaceFirst('{link}', res!)) ??
-              '';
-          if (response.contains('PlatformException')) {
-            link = "https://api.whatsapp.com/send?text=" +
-                input
-                    .toString()
-                    .replaceAll(" ", "%20")
-                    .replaceFirst('{link}', res);
-            await canLaunch(link)
-                ? launch(link)
-                : ErrorHandler.logError('failed to launch the url $link');
-          }
-          return;
-        } else {
-          link = "https://wa.me/+91$mobileNumber?text=" +
-              input
-                  .toString()
-                  .replaceAll(" ", "%20")
-                  .replaceFirst('{link}', res!);
-        }
-        await canLaunch(link)
-            ? launch(link)
-            : ErrorHandler.logError('failed to launch the url $link');
-      }
-    } catch (e, s) {
-      ErrorHandler.logError(e.toString(), s);
+void shareonwatsapp(FileStore store, String? mobileNumber, String input) async {
+  if (store.url == null) return;
+
+  try {
+    var res = await CoreRepository().urlShotner(store.url as String);
+    if (res == null) {
+      ErrorHandler.logError("URL Shortener returned null");
+      return;
     }
+
+    String message = Uri.encodeComponent(input.replaceFirst('{link}', res));
+
+    if (kIsWeb) {
+      String waUrl = mobileNumber == null
+          ? "https://wa.me/?text=$message"
+          : "https://wa.me/+91$mobileNumber?text=$message";
+
+      html.AnchorElement anchorElement = html.AnchorElement(href: waUrl)
+        ..target = "_blank"
+        ..click();
+    } else {
+      String waUrl = mobileNumber == null
+          ? "https://api.whatsapp.com/send?text=$message"
+          : "https://wa.me/+91$mobileNumber?text=$message";
+
+      final FlutterShareMe flutterShareMe = FlutterShareMe();
+      var response = await flutterShareMe.shareToWhatsApp(msg: message) ?? '';
+
+      if (response.contains('PlatformException')) {
+        await launchUrl(Uri.parse(waUrl)).catchError(
+            (e) => ErrorHandler.logError('Failed to launch URL: $waUrl, Error: $e'));
+      }
+    }
+  } catch (e, s) {
+    ErrorHandler.logError(e.toString(), s);
   }
+}
+
+  // void shareonwatsapp(FileStore store, mobileNumber, input) async {
+  //   if (store.url == null) return;
+  //   late html.AnchorElement anchorElement;
+  //   try {
+  //     var res = await CoreRepository().urlShotner(store.url as String);
+  //     if (kIsWeb) {
+  //       if (mobileNumber == null) {
+  //         anchorElement = new html.AnchorElement(
+  //             href: "https://wa.me/send?text=" +
+  //                 input.toString().replaceFirst('{link}', res!));
+  //       } else {
+  //         anchorElement = new html.AnchorElement(
+  //             href: "https://wa.me/+91$mobileNumber?text=" +
+  //                 input.toString().replaceFirst('{link}', res!));
+
+  //       }
+
+  //       anchorElement.target = "_blank";
+  //       anchorElement.click();
+  //     } else {
+  //       var link;
+  //       if (mobileNumber == null) {
+  //         final FlutterShareMe flutterShareMe = FlutterShareMe();
+  //         var response = await flutterShareMe.shareToWhatsApp(
+  //                 msg: input.toString().replaceFirst('{link}', res!)) ??
+  //             '';
+  //         if (response.contains('PlatformException')) {
+  //           link = "https://api.whatsapp.com/send?text=" +
+  //               input
+  //                   .toString()
+  //                   .replaceAll(" ", "%20")
+  //                   .replaceFirst('{link}', res);
+  //           await canLaunch(link)
+  //               ? launch(link)
+  //               : ErrorHandler.logError('failed to launch the url $link');
+  //         }
+  //         return;
+  //       } else {
+  //         link = "https://wa.me/+91$mobileNumber?text=" +
+  //             input
+  //                 .toString()
+  //                 .replaceAll(" ", "%20")
+  //                 .replaceFirst('{link}', res!);
+  //       }
+  //       await canLaunch(link)
+  //           ? launch(link)
+  //           : ErrorHandler.logError('failed to launch the url $link');
+  //     }
+  //   } catch (e, s) {
+  //     ErrorHandler.logError(e.toString(), s);
+  //   }
+  // }
 
   void getStoreFileDetails(
       fileStoreId, mode, mobileNumber, context, link) async {
