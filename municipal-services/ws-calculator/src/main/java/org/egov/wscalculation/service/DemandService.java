@@ -362,9 +362,9 @@ public class DemandService {
 
 		if (waterConnectionRequest.getWaterConnection().getConnectionType()
 				.equalsIgnoreCase(WSCalculationConstant.meteredConnectionType)) {
-			actionLink = actionLink.replace("$key", "ws-bill");
+			actionLink = actionLink.replace("$key", "ws-bill-v2");
 		} else {
-			actionLink = actionLink.replace("$key", "ws-bill-nm");
+			actionLink = actionLink.replace("$key", "ws-bill-nm-v2");
 		}
 		String messageString = localizationMessage.get(WSCalculationConstant.MSG_KEY);
 
@@ -417,9 +417,9 @@ public class DemandService {
 
 		if (waterConnectionRequest.getWaterConnection().getConnectionType()
 				.equalsIgnoreCase(WSCalculationConstant.meteredConnectionType)) {
-			actionBillLink = actionBillLink.replace("$key", "ws-bill");
+			actionBillLink = actionBillLink.replace("$key", "ws-bill-v2");
 		} else {
-			actionBillLink = actionBillLink.replace("$key", "ws-bill-nm");
+			actionBillLink = actionBillLink.replace("$key", "ws-bill-nm-v2");
 		}
         BigDecimal totalAmount =  fetchTotalBillAmount(demands, requestInfo);
 		String messageString = localizationMessage.get(WSCalculationConstant.MSG_KEY);
