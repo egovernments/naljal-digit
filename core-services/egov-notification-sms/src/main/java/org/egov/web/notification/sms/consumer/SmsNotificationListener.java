@@ -69,19 +69,21 @@ public class SmsNotificationListener {
         SMSRequest request = null;
         try {
             request = objectMapper.convertValue(consumerRecord, SMSRequest.class);
-            if(!startsWithOneToFive(request.getMobileNumber())) {
-                if (request.getExpiryTime() != null && request.getCategory() == Category.OTP) {
-                    Long expiryTime = request.getExpiryTime();
-                    Long currentTime = System.currentTimeMillis();
-                    if (expiryTime < currentTime) {
-                        log.info("OTP Expired");
-                        if (!StringUtils.isEmpty(expiredSmsTopic))
-                            kafkaTemplate.send(expiredSmsTopic, request);
+            if(!ObjectUtils.isEmpty(request.getTenantId()) && !smsProperties.getSmsDisabledTenantList().contains(request.getTenantId())) {
+                if (!startsWithOneToFive(request.getMobileNumber())) {
+                    if (request.getExpiryTime() != null && request.getCategory() == Category.OTP) {
+                        Long expiryTime = request.getExpiryTime();
+                        Long currentTime = System.currentTimeMillis();
+                        if (expiryTime < currentTime) {
+                            log.info("OTP Expired");
+                            if (!StringUtils.isEmpty(expiredSmsTopic))
+                                kafkaTemplate.send(expiredSmsTopic, request);
+                        } else {
+                            smsService.sendSMS(request.toDomain());
+                        }
                     } else {
                         smsService.sendSMS(request.toDomain());
                     }
-                } else {
-                    smsService.sendSMS(request.toDomain());
                 }
             }
 
