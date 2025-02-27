@@ -21,8 +21,8 @@ mdms_data = response.json()
 
 
 # Call user search to fetch SYSTEM user
-user_url = "http://egov-user.uat:8080/user/v1/_search?tenantId=as"
-user_payload = "{\n\t\"requestInfo\" :{\n   \"apiId\": \"ap.public\",\n    \"ver\": \"1\",\n    \"ts\": 45646456,\n    \"action\": \"POST\",\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n    \"userInfo\": {\n    \t\"id\" : 32\n    },\n    \"authToken\": \"5eb3655f-31b1-4cd5-b8c2-4f9c033510d4\"\n\t},\n\t\n   \"tenantId\" : \"as\",\n   \"userType\":\"SYSTEM\",\n   \"name\" : \"CRONJOB\",\n   \"pageSize\": \"1\",\n   \"roleCodes\" : [\"SYSTEM\"]\n\n\n}\n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n}\n"
+user_url = "http://egov-user.uat:8080/uat/user/v1/_search?tenantId=as"
+user_payload = "{\n\t\"requestInfo\" :{\n   \"apiId\": \"ap.public\",\n    \"ver\": \"1\",\n    \"ts\": 45646456,\n    \"action\": \"POST\",\n    \"did\": null,\n    \"key\": null,\n    \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n    \"userInfo\": {\n    \t\"id\" : 32\n    },\n    \"authToken\": \"5eb3655f-31b1-4cd5-b8c2-4f9c033510d4\"\n\t},\n\t\n   \"tenantId\" : \"as\",\n   \"userType\":\"SYSTEM\",\n   \"pageSize\": \"1\",\n   \"roleCodes\" : [\"SYSTEM\"]\n\n\n}\n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n   \n}\n"
 user_headers = {
   'Content-Type': 'application/json'
 }
