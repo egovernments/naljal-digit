@@ -31,9 +31,15 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   // const getUserType = () => "EMPLOYEE" || Digit.UserService.getType();
 
 
-  console.log(`${window?.location?.origin}/${path}`, "path1");
-  console.log(`${window?.location?.origin}`, "path1.5");
-  console.log(`${path}`, "path2");
+  const getDynamicPart = (url) => {
+    const parsedUrl = new URL(url);
+    const pathParts = parsedUrl.pathname.split('/').filter(Boolean);
+    return pathParts.length > 0 ? pathParts[0] : null; // Gets the first part after the domain
+  };
+
+  // console.log(`${window?.location?.origin}/${path}`, "path1");
+  // console.log(`${window?.location?.origin}`, "path1.5");
+  // console.log(`${path}`, "path2");
 
   useEffect(() => {
     if (!user) {
@@ -97,7 +103,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
 
   const links = [
     {
-      href: `${window?.location?.origin}/mgramseva-web/employee/user/login`,
+      href: `${window?.location?.origin}/${Digit.InitEnvironment.getStatePath}/mgramseva-web/employee/user/login`,
       text: `${t("LINK_State_Division")}`,
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -107,7 +113,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
       ),
     },
     {
-      href: `${window?.location?.origin}/mgramseva/`,
+      href: `${window?.location?.origin}/${Digit.InitEnvironment.getStatePath}/mgramseva/`,
       text: `${t("LINK_Village_Login")}`,
 
 
@@ -126,7 +132,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
       ),
     },
     {
-      href: `${window?.location?.origin}/mgramseva-web/citizen/payment/open-search?businessService=WS`,
+      href: `${window?.location?.origin}/${Digit.InitEnvironment.getStatePath}/mgramseva-web/citizen/payment/open-search?businessService=WS`,
       text:
 
 
@@ -166,7 +172,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   }
   if (config && config[0].body && config[0].body[1].label === "CORE_LOGIN_PASSWORD") {
     config[0].body[1].populators.validation = {
-      maxlength: 10,
+      maxlength: 20,
     };
   }
   return isLoading || isStoreLoading ? (

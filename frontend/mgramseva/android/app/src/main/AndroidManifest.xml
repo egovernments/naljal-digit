@@ -18,7 +18,7 @@
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:enableOnBackInvokedCallback="true"
-        android:label="mGramSeva"
+        android:label="Naljalseva"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"

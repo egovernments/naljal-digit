@@ -220,8 +220,6 @@ class _ConsumerDetailsState extends State<ConsumerDetails> {
                             contextKey:
                                 consumerProvider.consmerWalkthrougList[0].key,
                             key: Keys.createConsumer.CONSUMER_NAME_KEY,
-                            readOnly: true,
-                            isDisabled: true,
                           ),
 
                           RadioButtonFieldBuilder(
@@ -252,7 +250,7 @@ class _ConsumerDetailsState extends State<ConsumerDetails> {
                             contextKey:
                                 consumerProvider.consmerWalkthrougList[2].key,
                             key: Keys.createConsumer.CONSUMER_SPOUSE_PARENT_KEY,
-                            readOnly:  consumerProvider.isEdit == true,
+                            readOnly:  consumerProvider.isEdit == false,
                           ),
 
                           //Consumer Phone Number Field
@@ -626,13 +624,15 @@ class _ConsumerDetailsState extends State<ConsumerDetails> {
                           BuildTableRowTextButton(
                               i18.consumer.CONSUMER_VERIFY_TEXT,
                               ElevatedButton(                                
-                                style: ElevatedButton.styleFrom(                                  
+                                style: ElevatedButton.styleFrom( 
+                                               padding: EdgeInsets.symmetric(
+                                                horizontal: 10.0
+                                               ),                      
                                     backgroundColor:
                                     consumerProvider.isConsumerVerified ?
                                     Color.fromRGBO(58, 221, 8, 0.698) :
                                         Color.fromRGBO(3, 60, 207, 0.7))                                          ,
                                 child: Text(
-
                                   consumerProvider.isConsumerVerified ? 
                                   ApplicationLocalizations.of(context)
                                       .translate(
