@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
+import 'package:mgramseva/env/app_config.dart';
 import 'package:mgramseva/model/bill/bill_payments.dart';
 import 'package:mgramseva/model/demand/demand_list.dart';
 import 'package:mgramseva/model/file/file_store.dart';
 import 'package:mgramseva/model/localization/language.dart';
 import 'package:mgramseva/model/localization/localization_label.dart';
 import 'package:mgramseva/model/mdms/payment_type.dart';
+import 'package:mgramseva/model/mdms/penalty_module.dart';
 import 'package:mgramseva/model/mdms/tenants.dart';
 import 'package:mgramseva/model/user/user_details.dart';
 import 'package:mgramseva/model/user_profile/user_profile.dart';
@@ -21,6 +24,7 @@ import 'package:mgramseva/repository/core_repo.dart';
 import 'package:mgramseva/routers/routers.dart';
 import 'package:mgramseva/services/local_storage.dart';
 import 'package:mgramseva/services/mdms.dart';
+import 'package:mgramseva/services/state_config_services.dart';
 import 'package:mgramseva/utils/common_methods.dart';
 import 'package:mgramseva/utils/constants/i18_key_constants.dart';
 import 'package:mgramseva/utils/localization/application_localizations.dart';
@@ -262,8 +266,11 @@ class CommonProvider with ChangeNotifier {
 
   Future<void> getAppVersionDetails() async {
     try {
+       final stateConfigService = StateConfigService();
+
+      stateConfigService.getTenantId();
       var localizationList = await CoreRepository().getMdms(
-          initRequestBody({"tenantId": dotenv.get('STATE_LEVEL_TENANT_ID')}));
+          initRequestBody({"tenantId": stateConfigService.getTenantId()}));
       appVersion = localizationList.mdmsRes!.commonMasters!.appVersion!.first;
     } catch (e) {
       print(e.toString());
@@ -325,10 +332,11 @@ class CommonProvider with ChangeNotifier {
   }
   
     void onLogout() async {
-    await AuthenticationRepository().logoutUser().then((onValue) {
-      navigatorKey.currentState
+    navigatorKey.currentState
           ?.pushNamedAndRemoveUntil(Routes.SELECT_LANGUAGE, (route) => false);
       loginCredentials = null;
+    await AuthenticationRepository().logoutUser().then((onValue) {
+     
     });
   }
 
@@ -337,57 +345,83 @@ class CommonProvider with ChangeNotifier {
     CoreRepository().fileDownload(context, store.url!);
   }
 
-  void shareonwatsapp(FileStore store, mobileNumber, input) async {
-    if (store.url == null) return;
-    late html.AnchorElement anchorElement;
-    try {
-      var res = await CoreRepository().urlShotner(store.url as String);
-      if (kIsWeb) {
-        if (mobileNumber == null) {
-          anchorElement = new html.AnchorElement(
-              href: "https://wa.me/send?text=" +
-                  input.toString().replaceFirst('{link}', res!));
-        } else {
-          anchorElement = new html.AnchorElement(
-              href: "https://wa.me/+91$mobileNumber?text=" +
-                  input.toString().replaceFirst('{link}', res!));
-        }
+  void shareonwatsapp(FileStore store, String? mobileNumber, String input) async {
+  if (store.url == null) return;
 
-        anchorElement.target = "_blank";
-        anchorElement.click();
-      } else {
-        var link;
-        if (mobileNumber == null) {
-          final FlutterShareMe flutterShareMe = FlutterShareMe();
-          var response = await flutterShareMe.shareToWhatsApp(
-                  msg: input.toString().replaceFirst('{link}', res!)) ??
-              '';
-          if (response.contains('PlatformException')) {
-            link = "https://api.whatsapp.com/send?text=" +
-                input
-                    .toString()
-                    .replaceAll(" ", "%20")
-                    .replaceFirst('{link}', res);
-            await canLaunch(link)
-                ? launch(link)
-                : ErrorHandler.logError('failed to launch the url $link');
-          }
-          return;
-        } else {
-          link = "https://wa.me/+91$mobileNumber?text=" +
-              input
-                  .toString()
-                  .replaceAll(" ", "%20")
-                  .replaceFirst('{link}', res!);
-        }
-        await canLaunch(link)
-            ? launch(link)
-            : ErrorHandler.logError('failed to launch the url $link');
-      }
-    } catch (e, s) {
-      ErrorHandler.logError(e.toString(), s);
+  try {
+    var res = await CoreRepository().urlShotner(store.url as String);
+    if (res == null) {
+      ErrorHandler.logError("URL Shortener returned null");
+      return;
     }
+
+    String message = input.replaceFirst('{link}', res);
+
+    if (kIsWeb) {
+      String waUrl = mobileNumber == null
+          ? "https://wa.me/?text=${Uri.encodeComponent(message)}"
+          : "https://wa.me/+91$mobileNumber?text=${Uri.encodeComponent(message)}";
+
+      html.AnchorElement anchorElement = html.AnchorElement(href: waUrl)
+        ..target = "_blank"
+        ..click();
+    } else {
+      String waUrl = mobileNumber == null
+          ? "https://api.whatsapp.com/send?text=${Uri.encodeComponent(message)}"
+          : "https://wa.me/+91$mobileNumber?text=${Uri.encodeComponent(message)}";
+
+      final FlutterShareMe flutterShareMe = FlutterShareMe();
+      var response = await flutterShareMe.shareToWhatsApp(msg: message) ?? '';
+
+      if (response.contains('PlatformException')) {
+        await launchUrl(Uri.parse(waUrl)).catchError(
+            (e) => ErrorHandler.logError('Failed to launch URL: $waUrl, Error: $e'));
+      }
+    }
+  } catch (e, s) {
+    ErrorHandler.logError(e.toString(), s);
   }
+}
+
+
+// void shareonwatsapp(FileStore store, String? mobileNumber, String input) async {
+//   if (store.url == null) return;
+
+//   try {
+//     var res = await CoreRepository().urlShotner(store.url as String);
+//     if (res == null) {
+//       ErrorHandler.logError("URL Shortener returned null");
+//       return;
+//     }
+
+//     String message = Uri.encodeComponent(input.replaceFirst('{link}', res));
+
+//     if (kIsWeb) {
+//       String waUrl = mobileNumber == null
+//           ? "https://wa.me/?text=$message"
+//           : "https://wa.me/+91$mobileNumber?text=$message";
+
+//       html.AnchorElement anchorElement = html.AnchorElement(href: waUrl)
+//         ..target = "_blank"
+//         ..click();
+//     } else {
+//       String waUrl = mobileNumber == null
+//           ? "https://api.whatsapp.com/send?text=$message"
+//           : "https://wa.me/+91$mobileNumber?text=$message";
+
+//       final FlutterShareMe flutterShareMe = FlutterShareMe();
+//       var response = await flutterShareMe.shareToWhatsApp(msg: message) ?? '';
+
+//       if (response.contains('PlatformException')) {
+//         await launchUrl(Uri.parse(waUrl)).catchError(
+//             (e) => ErrorHandler.logError('Failed to launch URL: $waUrl, Error: $e'));
+//       }
+//     }
+//   } catch (e, s) {
+//     ErrorHandler.logError(e.toString(), s);
+//   }
+// }
+
 
   void getStoreFileDetails(
       fileStoreId, mode, mobileNumber, context, link) async {
@@ -939,13 +973,34 @@ class CommonProvider with ChangeNotifier {
       var commonProvider = Provider.of<CommonProvider>(
           navigatorKey.currentContext!,
           listen: false);
-
+          
       return await CoreRepository()
           .getPaymentTypeMDMS(getMDMSPaymentModes(tenantId));
     } catch (e) {
       return PaymentType();
     }
   }
+
+
+
+  static Future<PenaltyModule> getMdmsPenaltyService(String tenantId) async {
+    try {
+      var commonProvider = Provider.of<CommonProvider>(
+          navigatorKey.currentContext!,
+          listen: false);
+          
+      return await CoreRepository()
+          .getPenaltyModuleMDMS(getMDMSPenaltyModule(tenantId));
+    } catch (e) {
+      return PenaltyModule();
+    }
+  }
+
+
+
+
+
+
 
   static Future<PaymentType> getMdmsPaymentList(String tenantId) async {
     try {
@@ -1129,23 +1184,28 @@ class CommonProvider with ChangeNotifier {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        ApplicationLocalizations.of(context)
-                                            .translate(visibleTenants[index].code!),
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w400,
-                                            color: commonProvider.userDetails!
-                                                            .selectedtenant !=
-                                                        null &&
-                                                    commonProvider
-                                                            .userDetails!
-                                                            .selectedtenant!
-                                                            .city!
-                                                            .code ==
-                                                        visibleTenants[index].city!.code!
-                                                ? Theme.of(context).primaryColor
-                                                : Colors.black),
+                                      Flexible(
+                                        child: Text(
+                                          ApplicationLocalizations.of(context)
+                                              .translate(visibleTenants[index].code!),
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color: commonProvider.userDetails!
+                                                              .selectedtenant !=
+                                                          null &&
+                                                      commonProvider
+                                                              .userDetails!
+                                                              .selectedtenant!
+                                                              .city!
+                                                              .code ==
+                                                          visibleTenants[index].city!.code!
+                                                  ? Theme.of(context).primaryColor
+                                                  : Colors.black),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  softWrap: false,
+                                        ),
                                       ),
                                       Text(visibleTenants[index].city!.code!,
                                           style: TextStyle(

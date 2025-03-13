@@ -69,8 +69,9 @@ export const Request = async ({
   multipartData = {},
   reqTimestamp = false,
 }) => {
-  url = `/uat${url}`;
-  //url = `/${window.globalConfigs.getConfig("STATE_PREFIX_CODE")}${url}`;
+  url = window?.location?.href.includes('localhost')
+  ? `${url}` // Running locally
+  : `/${Digit.InitEnvironment.getStatePath}${url}`;
   const ts = new Date().getTime();
   if (method.toUpperCase() === "POST") {
    
