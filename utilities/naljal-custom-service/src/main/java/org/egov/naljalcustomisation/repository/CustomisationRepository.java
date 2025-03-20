@@ -1,12 +1,16 @@
 package org.egov.naljalcustomisation.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.naljalcustomisation.config.CustomisationConfiguration;
 import org.egov.naljalcustomisation.repository.builder.CustomisationQueryBuilder;
+import org.egov.naljalcustomisation.repository.rowmapper.VendorReportRowMapper;
 import org.egov.naljalcustomisation.util.CustomServiceUtil;
+import org.egov.naljalcustomisation.web.model.VendorReportData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +27,12 @@ public class CustomisationRepository {
 
     @Autowired
     private CustomServiceUtil customServiceUtil;
+
+    @Autowired
+    private CustomisationConfiguration configuration;
+
+    @Autowired
+    private VendorReportRowMapper vendorReportRowMapper;
 
     public List<String> getTenantId() {
         String query = queryBuilder.getDistinctTenantIds();
@@ -109,6 +119,42 @@ public class CustomisationRepository {
                 .append(endDate).append(" and py.tenantId = '").append(tenantId).append("'");
         return jdbcTemplate.queryForObject(query.toString(), Integer.class);
 
+    }
+
+    public List<VendorReportData> getVendorReportData(Long monthStartDateTime, String tenantId, Integer offset, Integer limit)
+    {
+        StringBuilder vendor_report_query=new StringBuilder(queryBuilder.VENDOR_REPORT_QUERY);
+
+        List<Object> preparedStatement=new ArrayList<>();
+        preparedStatement.add(tenantId);
+        preparedStatement.add(monthStartDateTime);
+//		preparedStatement.add(monthEndDateTime);
+
+
+        Integer newlimit=configuration.getDefaultVendorLimit();
+        Integer newoffset= configuration.getDefaultVendorOffset();
+
+        if(limit==null && offset==null)
+            newlimit=configuration.getMaxSearchLimit();
+        if(limit!=null && limit<=configuration.getMaxSearchLimit())
+            newlimit=limit;
+        if(limit!=null && limit>=configuration.getMaxSearchLimit())
+            newlimit=configuration.getMaxSearchLimit();
+
+        if(offset!=null)
+            newoffset=offset;
+
+        if (newlimit>0){
+            vendor_report_query.append(" offset ?  limit ? ;");
+            preparedStatement.add(newoffset);
+            preparedStatement.add(newlimit);
+        }
+
+        log.info("Query of vendor report : "+vendor_report_query.toString()+" prepared statement of vendor report "+ preparedStatement);
+
+        List<VendorReportData> vendorReportDataList=jdbcTemplate.query(vendor_report_query.toString() , preparedStatement.toArray(), vendorReportRowMapper);
+
+        return vendorReportDataList;
     }
 
 }

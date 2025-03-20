@@ -158,4 +158,13 @@ public class CustomisationConfiguration {
     @Value("${egov.indexer.es.password}")
     private String esPassword;
 
+    @Value("${egov.vendorregistory.default.limit}")
+    private Integer defaultVendorLimit;
+
+    @Value("${egov.vendorregistory.default.offset}")
+    private Integer defaultVendorOffset;
+
+    @Value("${egov.vendorregistory.max.limit}")
+    private Integer maxSearchLimit;
+
 }

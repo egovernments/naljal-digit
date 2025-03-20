@@ -221,6 +221,12 @@ public class CustomisationQueryBuilder {
 
     public static final String ACTUALCOLLECTION = " select sum(py.totalAmountPaid) FROM egcl_payment py INNER JOIN egcl_paymentdetail pyd ON pyd.paymentid = py.id where pyd.businessservice='WS' ";
 
+    public static final String VENDOR_REPORT_QUERY = "select echallan.challanno,echallan.typeofexpense as type_of_expense,"
+            + " vendor.name,eg_user.uuid as owner_uuid from eg_echallan echallan INNER JOIN eg_vendor vendor on " +
+            " echallan.vendor=vendor.id INNER JOIN eg_user on eg_user.uuid=vendor.owner_id where " +
+            " echallan.applicationstatus!='CANCELLED' and echallan.tenantid =? " +
+            " and echallan.createdtime >= ? order by echallan.challanno desc ";
+
     public String getQueryForWCCountbyDemandDate(SearchCriteria criteria, List<Object> preparedStatement,
                                                  RequestInfo requestInfo) {
         if (criteria.isEmpty() || criteria.getTenantId().isEmpty())
