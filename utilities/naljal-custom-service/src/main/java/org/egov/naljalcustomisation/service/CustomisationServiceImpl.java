@@ -1268,4 +1268,19 @@ public class CustomisationServiceImpl implements CustomisationService {
         return vendorReportData;
 
     }
+
+    public List<ExpenseBillReportData> expenseBillReport(RequestInfo requestInfo, String monthstartDate,String monthendDate, String tenantId, Integer offset, Integer limit)
+    {
+        DateTimeFormatter dtf=DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate startDate=LocalDate.parse(monthstartDate,dtf);
+        LocalDate endDate=LocalDate.parse(monthendDate,dtf);
+
+        Long monthStartDateTime=LocalDateTime.of(startDate.getYear(),startDate.getMonth(),startDate.getDayOfMonth(),
+                0,0,0).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        Long monthEndDateTime=LocalDateTime.of(endDate, LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        List<ExpenseBillReportData> expenseBillReport=repository.getExpenseBillReport(monthStartDateTime,monthEndDateTime,tenantId,offset,limit);
+        return expenseBillReport;
+
+    }
 }

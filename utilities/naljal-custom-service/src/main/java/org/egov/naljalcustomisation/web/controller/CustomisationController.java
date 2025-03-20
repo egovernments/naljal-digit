@@ -182,4 +182,21 @@ public class CustomisationController {
 
         return new ResponseEntity<>(vendorReportResponse,HttpStatus.OK);
     }
+
+    @PostMapping("/eChallan/v1/_expenseBillReport")
+    public ResponseEntity<ExpenseBillReportResponse> expenseBillReport(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+                                                                       @RequestParam("monthstartDate") String monthstartDate,
+                                                                       @RequestParam("monthendDate") String monthendDate,
+                                                                       @RequestParam("tenantId") String tenantId,
+                                                                       @RequestParam("offset") Integer offset,
+                                                                       @RequestParam("limit") Integer limit)
+    {
+        List<ExpenseBillReportData> expenseBillReport=customisationService.expenseBillReport(requestInfoWrapper.getRequestInfo(),monthstartDate,monthendDate,tenantId,offset,limit);
+        ExpenseBillReportResponse expenseBillReportResponse=
+                ExpenseBillReportResponse.builder().ExpenseBillReportData(expenseBillReport)
+                        .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(),
+                                true))
+                        .build();
+        return new ResponseEntity<>(expenseBillReportResponse,HttpStatus.OK);
+    }
 }

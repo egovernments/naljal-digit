@@ -42,5 +42,7 @@ public interface CustomisationService {
     List<RevenueCollectionData> getRevenueCollectionData(@Valid SearchCriteria criteria, RequestInfo requestInfo);
 
      List<VendorReportData> vendorReport(String monthStartDate, String tenantId, Integer offset, Integer limit, RequestInfo requestInfo);
+    public List<ExpenseBillReportData> expenseBillReport(RequestInfo requestInfo, String monthstartDate,String monthendDate, String tenantId, Integer offset, Integer limit);
+
 
 }

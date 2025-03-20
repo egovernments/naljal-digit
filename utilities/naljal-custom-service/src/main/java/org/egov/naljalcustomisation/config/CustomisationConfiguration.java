@@ -167,4 +167,10 @@ public class CustomisationConfiguration {
     @Value("${egov.vendorregistory.max.limit}")
     private Integer maxSearchLimit;
 
+    @Value("${egov.challan.default.limit}")
+    private Integer defaultChallanLimit;
+
+    @Value("${egov.challan.default.offset}")
+    private Integer defaultChallanOffset;
+
 }

@@ -3,8 +3,10 @@ package org.egov.naljalcustomisation.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.naljalcustomisation.config.CustomisationConfiguration;
 import org.egov.naljalcustomisation.repository.builder.CustomisationQueryBuilder;
+import org.egov.naljalcustomisation.repository.rowmapper.ExpenseBillReportRowMapper;
 import org.egov.naljalcustomisation.repository.rowmapper.VendorReportRowMapper;
 import org.egov.naljalcustomisation.util.CustomServiceUtil;
+import org.egov.naljalcustomisation.web.model.ExpenseBillReportData;
 import org.egov.naljalcustomisation.web.model.VendorReportData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -33,6 +35,8 @@ public class CustomisationRepository {
 
     @Autowired
     private VendorReportRowMapper vendorReportRowMapper;
+    @Autowired
+    private ExpenseBillReportRowMapper expenseBillReportRowMapper;
 
     public List<String> getTenantId() {
         String query = queryBuilder.getDistinctTenantIds();
@@ -155,6 +159,42 @@ public class CustomisationRepository {
         List<VendorReportData> vendorReportDataList=jdbcTemplate.query(vendor_report_query.toString() , preparedStatement.toArray(), vendorReportRowMapper);
 
         return vendorReportDataList;
+    }
+
+    public List<ExpenseBillReportData> getExpenseBillReport(Long monthStartDateTime, Long monthEndDateTime, String tenantId, Integer offset, Integer limit)
+    {
+        StringBuilder expenseBillQuery =new StringBuilder(queryBuilder.EXPENSEBILLQUERY);
+
+        List<Object> preparedStatement=new ArrayList<>();
+        preparedStatement.add(tenantId);
+        preparedStatement.add(tenantId);
+        preparedStatement.add(monthStartDateTime);
+        preparedStatement.add(monthEndDateTime);
+
+        Integer newLimit= configuration.getDefaultChallanLimit();
+        Integer newOffset= configuration.getDefaultChallanOffset();
+
+        if(limit==null && offset==null)
+            newLimit=configuration.getMaxSearchLimit();
+        if(limit!=null && limit<=configuration.getMaxSearchLimit())
+            newLimit=limit;
+        if(limit!=null && limit>=configuration.getMaxSearchLimit())
+            newLimit=configuration.getMaxSearchLimit();
+
+        if(offset!=null)
+            newOffset=offset;
+
+        if(newLimit>0)
+        {
+            expenseBillQuery.append("offset ? limit ? ;");
+            preparedStatement.add(newOffset);
+            preparedStatement.add(newLimit);
+        }
+
+        log.info("Query of expense bill report " +expenseBillQuery.toString()+" prepared statement "+preparedStatement);
+        List<ExpenseBillReportData> expenseBillReportDataList=new ArrayList<>();
+        expenseBillReportDataList=jdbcTemplate.query(expenseBillQuery.toString(), preparedStatement.toArray(),expenseBillReportRowMapper);
+        return expenseBillReportDataList;
     }
 
 }
