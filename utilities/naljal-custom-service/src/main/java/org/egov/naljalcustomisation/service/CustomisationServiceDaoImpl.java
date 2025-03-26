@@ -74,7 +74,9 @@ public class CustomisationServiceDaoImpl implements CustomisationServiceDao {
         StringBuilder query = new StringBuilder(customisationQueryBuilder.BILL_REPORT_QUERY);
         List<Object> preparedStatement = new ArrayList<>();
         preparedStatement.add(demandStartDate);
+        log.info("demandStartDate"+demandStartDate);
         preparedStatement.add(demandEndDate);
+        log.info("demandEndDate"+demandEndDate);
         preparedStatement.add(tenantId);
 
         if (sortOrder.equals(SearchCriteria.SortOrder.DESC.name()))
@@ -99,6 +101,7 @@ public class CustomisationServiceDaoImpl implements CustomisationServiceDao {
             preparedStatement.add(newoffset);
             preparedStatement.add(newlimit);
         }
+        log.info("query"+query);
         List<BillReportData> billReportList = new ArrayList<>();
         try {
 
