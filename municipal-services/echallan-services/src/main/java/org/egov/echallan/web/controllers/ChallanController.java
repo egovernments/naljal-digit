@@ -81,20 +81,20 @@ public class ChallanController {
 		}
 
 
-	@PostMapping("/_schedulermonthsummary")
-	public void schedulermonthsummary(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
-		schedulerService.sendMonthSummaryEvent(requestInfoWrapper.getRequestInfo());
-	}
+//	@PostMapping("/_schedulermonthsummary")
+//	public void schedulermonthsummary(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
+//		schedulerService.sendMonthSummaryEvent(requestInfoWrapper.getRequestInfo());
+//	}
 
-	@PostMapping("/_schedulernewexpenditure")
-	public void schedulernewexpenditure(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
-		schedulerService.sendNewExpenditureEvent(requestInfoWrapper.getRequestInfo());
-	}
+//	@PostMapping("/_schedulernewexpenditure")
+//	public void schedulernewexpenditure(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
+//		schedulerService.sendNewExpenditureEvent(requestInfoWrapper.getRequestInfo());
+//	}
 
-	@PostMapping("/_schedulermarkexpensebill")
-	public void schedulermarkexpensebill(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
-		schedulerService.sendMarkExpensebillEvent(requestInfoWrapper.getRequestInfo());
-	}
+//	@PostMapping("/_schedulermarkexpensebill")
+//	public void schedulermarkexpensebill(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
+//		schedulerService.sendMarkExpensebillEvent(requestInfoWrapper.getRequestInfo());
+//	}
 
 	 
 	@PostMapping("/_lastMonthSummary")
@@ -163,7 +163,7 @@ public class ChallanController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@PostMapping("/_expenseBillReport")
+	/*@PostMapping("/_expenseBillReport")
 	public ResponseEntity<ExpenseBillReportResponse> expenseBillReport(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 																	   @RequestParam("monthstartDate") String monthstartDate,
 																	   @RequestParam("monthendDate") String monthendDate,
@@ -179,5 +179,5 @@ public class ChallanController {
 						.build();
 		return new ResponseEntity<>(expenseBillReportResponse,HttpStatus.OK);
 	}
-
+*/
 }

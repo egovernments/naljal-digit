@@ -67,7 +67,7 @@ public class VendorController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@RequestMapping(value="/_vendorReport" ,method = RequestMethod.POST)
+	/*@RequestMapping(value="/_vendorReport" ,method = RequestMethod.POST)
 	public ResponseEntity<VendorReportResponse> vendorReport(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 															 @RequestParam(value="monthStartDate" , required = true) String monthStartDate,
 															 @RequestParam ("tenantId") String tenantId,
@@ -79,6 +79,6 @@ public class VendorController {
 		VendorReportResponse vendorReportResponse= VendorReportResponse.builder().VendorReportData(vendorReportData).responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(),true)).build();
 
 		return new ResponseEntity<>(vendorReportResponse,HttpStatus.OK);
-    }
+    }*/
 
 }
