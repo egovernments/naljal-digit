@@ -53,7 +53,7 @@ class Url {
   static const String FETCH_WC_CONNECTION = 'ws-services/wc/_search';
   static const String VENDOR_SEARCH = 'vendor/v1/_search';
   static const String CREATE_VENDOR = 'vendor/v1/_create';
-  static const String VENDOR_REPORT = 'vendor/v1/_vendorReport';
+  static const String VENDOR_REPORT = 'naljal-custom-service/v1/_vendorReport';
   static const String EGOV_LOCATIONS =
       'egov-location/location/v11/boundarys/_search';
 
@@ -77,11 +77,11 @@ class Url {
   /// Dashboard
   static const String EXPENDITURE_METRIC =
       'echallan-services/eChallan/v1/_expenseDashboard';
-  static const String REVENUE_METRIC = 'ws-services/wc/_revenueDashboard';
+  static const String REVENUE_METRIC = 'naljal-custom-service/_revenueDashboard';
   static const String GRAPHICAL_DASHBOARD =
       'dashboard-analytics/dashboard/getChartV2';
   static const String DASHBOARD_COLLECTION_TABLE_DATA =
-      'ws-services/wc/_revenueCollectionData';
+      'naljal-custom-service/_revenueCollectionData';
   static const String DASHBOARD_EXPENSE_TABLE_DATA =
       'echallan-services/eChallan/v1/_chalanCollectionData';
 
@@ -92,16 +92,16 @@ class Url {
       'adapter-master-data/project/v1/_search';
 
   ///Reports
-  static const String LEDGER_REPORT = 'ws-services/wc/ledger-report';
-  static const String MONTHLY_LEDGER_REPORT = 'ws-services/wc/month-report';
-  static const String BILL_REPORT = 'ws-services/wc/_billReport';
-  static const String COLLECTION_REPORT = 'ws-services/wc/_collectionReport';
+  static const String LEDGER_REPORT = 'naljal-custom-service/ledger-report';
+  static const String MONTHLY_LEDGER_REPORT = 'naljal-custom-service/month-report';
+  static const String BILL_REPORT = 'naljal-custom-service/_billReport';
+  static const String COLLECTION_REPORT = 'naljal-custom-service/_collectionReport';
   static const String INACTIVE_CONSUMER_REPORT =
-      'ws-services/wc/_inactiveConsumerReport';
+      'naljal-custom-service/_inactiveConsumerReport';
   static const String EXPENSE_BILL_REPORT =
-      'echallan-services/eChallan/v1/_expenseBillReport';
+      'naljal-custom-service/eChallan/v1/_expenseBillReport';
   static const String WATER_CONNECTION_COUNT =
-      'ws-services/wc/_countWCbyDemandGenerationDate';
+      'naljal-custom-service/_countWCbyDemandGenerationDate';
   static const String WATER_CONNECTION_DEMAND_NOT_GENERATED =
       'ws-services/wc/consumers/demand-not-generated';
 }
