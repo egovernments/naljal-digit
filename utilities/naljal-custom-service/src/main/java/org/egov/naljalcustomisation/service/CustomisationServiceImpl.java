@@ -894,6 +894,18 @@ public class CustomisationServiceImpl implements CustomisationService {
         log.info("demStartDateTime:"+demStartDateTime);
         log.info("demEndDateTime:"+demEndDateTime);
 
+        ZoneOffset systemOffset = ZoneId.systemDefault().getRules().getOffset(LocalDateTime.now());
+
+        Long demStartDateTimeA = LocalDateTime.of(demStartDate, LocalTime.MIDNIGHT)
+                .toInstant(systemOffset) // Use system time zone offset
+                .toEpochMilli();
+
+        Long demEndDateTimeB = LocalDateTime.of(demEndDate, LocalTime.MAX)
+                .toInstant(systemOffset) // Use system time zone offset
+                .toEpochMilli();
+        log.info("demStartDateTimeA:"+demStartDateTimeA);
+        log.info("demEndDateTimeB:"+demEndDateTimeB);
+
 
         List<BillReportData> billReportData = customisationServiceDaoImpl.getBillReportData(demStartDateTime, demEndDateTime, tenantId, offset, limit, sortOrder);
         return billReportData;
