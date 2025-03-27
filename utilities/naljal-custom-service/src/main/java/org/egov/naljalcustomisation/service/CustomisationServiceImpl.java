@@ -861,62 +861,14 @@ public class CustomisationServiceImpl implements CustomisationService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate demStartDate = LocalDate.parse(demandStartDate, formatter);
         LocalDate demEndDate = LocalDate.parse(demandEndDate, formatter);
-        log.info("demStartDate:"+demStartDate);
-        log.info("demEndDate:"+demEndDate);
-        Long demStartDateTimeLong = LocalDateTime.of(demStartDate.getYear(), demStartDate.getMonth(), demStartDate.getDayOfMonth(), 0, 0, 0)
-                .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        Long demEndDateTimeLong = LocalDateTime.of(demEndDate, LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        log.info("demStartDateTimeLong:"+demStartDateTimeLong);
-        log.info("demStartDateTimeLong:"+demEndDateTimeLong);
-
-        Long demStartDateTimeX = LocalDateTime.of(demStartDate, LocalTime.MIDNIGHT)
-                .atZone(ZoneId.systemDefault()) // Use system's time zone
-                .toInstant()
-                .toEpochMilli();
-
-        Long demEndDateTimeX = LocalDateTime.of(demEndDate, LocalTime.MAX)
-                .atZone(ZoneId.systemDefault()) // Use system's time zone
-                .toInstant()
-                .toEpochMilli();
-
-        log.info("demStartDateTimeX:"+demStartDateTimeX);
-        log.info("demEndDateTimeX:"+demEndDateTimeX);
-
-        Long demStartDateTime = LocalDateTime.of(demStartDate, LocalTime.MIDNIGHT)
-                .toInstant(ZoneOffset.UTC) // Force UTC conversion
-                .toEpochMilli();
-
-        Long demEndDateTime = LocalDateTime.of(demEndDate, LocalTime.MAX)
-                .toInstant(ZoneOffset.UTC) // Force UTC conversion
-                .toEpochMilli();
-
-        log.info("demStartDateTime:"+demStartDateTime);
-        log.info("demEndDateTime:"+demEndDateTime);
-
-        ZoneOffset systemOffset = ZoneId.systemDefault().getRules().getOffset(LocalDateTime.now());
-
-        Long demStartDateTimeA = LocalDateTime.of(demStartDate, LocalTime.MIDNIGHT)
-                .toInstant(systemOffset) // Use system time zone offset
-                .toEpochMilli();
-
-        Long demEndDateTimeB = LocalDateTime.of(demEndDate, LocalTime.MAX)
-                .toInstant(systemOffset) // Use system time zone offset
-                .toEpochMilli();
-        log.info("demStartDateTimeA:"+demStartDateTimeA);
-        log.info("demEndDateTimeB:"+demEndDateTimeB);
+       /* Long demStartDateTime = LocalDateTime.of(demStartDate.getYear(), demStartDate.getMonth(), demStartDate.getDayOfMonth(), 0, 0, 0)
+                .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();*/
         ZoneId istZone = ZoneId.of("Asia/Kolkata"); // IST Time Zone
         LocalDateTime startDateTime = demStartDate.atStartOfDay();
-        LocalDateTime endDateTime = demEndDate.atTime(LocalTime.MAX);
-
         log.info("Local Start DateTime: " + startDateTime);
-        log.info("Local End DateTime: " + endDateTime);
-        long demStartDateTimeC = startDateTime.atZone(istZone).toInstant().toEpochMilli();
-        long demEndDateTimeD = endDateTime.atZone(istZone).toInstant().toEpochMilli();
-
-        log.info("demStartDateTimeC:"+demStartDateTimeC);
-        log.info("demEndDateTimeD:"+demEndDateTimeD);
-
+        Long demStartDateTime = startDateTime.atZone(istZone).toInstant().toEpochMilli();
+        Long demEndDateTime = LocalDateTime.of(demEndDate, LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         List<BillReportData> billReportData = customisationServiceDaoImpl.getBillReportData(demStartDateTime, demEndDateTime, tenantId, offset, limit, sortOrder);
         return billReportData;
     }
