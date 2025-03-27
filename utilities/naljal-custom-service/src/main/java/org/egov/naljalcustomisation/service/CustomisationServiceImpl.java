@@ -905,7 +905,17 @@ public class CustomisationServiceImpl implements CustomisationService {
                 .toEpochMilli();
         log.info("demStartDateTimeA:"+demStartDateTimeA);
         log.info("demEndDateTimeB:"+demEndDateTimeB);
+        ZoneId istZone = ZoneId.of("Asia/Kolkata"); // IST Time Zone
+        LocalDateTime startDateTime = demStartDate.atStartOfDay();
+        LocalDateTime endDateTime = demEndDate.atTime(LocalTime.MAX);
 
+        log.info("Local Start DateTime: " + startDateTime);
+        log.info("Local End DateTime: " + endDateTime);
+        long demStartDateTimeC = startDateTime.atZone(istZone).toInstant().toEpochMilli();
+        long demEndDateTimeD = endDateTime.atZone(istZone).toInstant().toEpochMilli();
+
+        log.info("demStartDateTimeC:"+demStartDateTimeC);
+        log.info("demEndDateTimeD:"+demEndDateTimeD);
 
         List<BillReportData> billReportData = customisationServiceDaoImpl.getBillReportData(demStartDateTime, demEndDateTime, tenantId, offset, limit, sortOrder);
         return billReportData;
