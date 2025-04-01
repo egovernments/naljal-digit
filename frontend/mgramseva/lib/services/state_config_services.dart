@@ -6,7 +6,7 @@ import 'package:mgramseva/env/app_config.dart';
 import 'package:universal_html/html.dart' as html; // For web-based URL handling
 class StateConfigService {
   static final StateConfigService _instance = StateConfigService._internal();
-  static const String configUrl = "https://naljal-uat-s3.s3.ap-south-1.amazonaws.com/states.json";
+  static const String configUrl = "https://naljal-s3.s3.ap-south-1.amazonaws.com/states.json";
   Map<String, String> _stateConfig = {};
 
   factory StateConfigService() {
