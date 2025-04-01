@@ -99,6 +99,7 @@ public class CustomisationServiceDaoImpl implements CustomisationServiceDao {
             preparedStatement.add(newoffset);
             preparedStatement.add(newlimit);
         }
+        log.info("query"+query);
         List<BillReportData> billReportList = new ArrayList<>();
         try {
 

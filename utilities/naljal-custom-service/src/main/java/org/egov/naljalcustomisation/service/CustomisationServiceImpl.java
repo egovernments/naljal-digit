@@ -864,8 +864,18 @@ public class CustomisationServiceImpl implements CustomisationService {
 
         Long demStartDateTime = LocalDateTime.of(demStartDate.getYear(), demStartDate.getMonth(), demStartDate.getDayOfMonth(), 0, 0, 0)
                 .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        ZoneId istZone = ZoneId.of("Asia/Kolkata"); // IST Time Zone
+        LocalDateTime startDateTime = demStartDate.atStartOfDay();
+        LocalDateTime endDateTime = demEndDate.atTime(LocalTime.MAX);
+        log.info("Local Start DateTime: " + startDateTime);
+        log.info("Local End DateTime: " + endDateTime);
+        long demStartDateTimeIST = startDateTime.atZone(istZone).toInstant().toEpochMilli();
+        long demEndDateTimeIST = endDateTime.atZone(istZone).toInstant().toEpochMilli();
+
+        log.info("demStartDateTimeC:"+demStartDateTimeIST);
+        log.info("demEndDateTimeD:"+demEndDateTimeIST);
         Long demEndDateTime = LocalDateTime.of(demEndDate, LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        List<BillReportData> billReportData = customisationServiceDaoImpl.getBillReportData(demStartDateTime, demEndDateTime, tenantId, offset, limit, sortOrder);
+        List<BillReportData> billReportData = customisationServiceDaoImpl.getBillReportData(demStartDateTimeIST, demEndDateTimeIST, tenantId, offset, limit, sortOrder);
         return billReportData;
     }
 
