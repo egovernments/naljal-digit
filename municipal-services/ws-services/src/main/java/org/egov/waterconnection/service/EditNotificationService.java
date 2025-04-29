@@ -117,33 +117,37 @@ public class EditNotificationService {
 				}
 			});
 		}
-		Map<String, String> mobileNumberAndMessage = workflowNotificationService
-				.getMessageForMobileNumber(mobileNumbersAndNames, waterConnectionRequest, message, property, additionalDetailsMap);
-		Set<String> mobileNumbers = mobileNumberAndMessage.keySet().stream().collect(Collectors.toSet());
-		Map<String, String> mapOfPhoneNoAndUUIDs = workflowNotificationService.fetchUserUUIDs(mobileNumbers, waterConnectionRequest.getRequestInfo(),
-				property.getTenantId());
-		if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
-			log.info("UUID search failed!");
-		}
-		List<Event> events = new ArrayList<>();
-		for (String mobile : mobileNumbers) {
-			if (null == mapOfPhoneNoAndUUIDs.get(mobile) || null == mobileNumberAndMessage.get(mobile)) {
-				log.error("No UUID/SMS for mobile {} skipping event", mobile);
-				continue;
+		if( message != null) {
+			Map<String, String> mobileNumberAndMessage = workflowNotificationService
+					.getMessageForMobileNumber(mobileNumbersAndNames, waterConnectionRequest, message, property, additionalDetailsMap);
+			Set<String> mobileNumbers = mobileNumberAndMessage.keySet().stream().collect(Collectors.toSet());
+			Map<String, String> mapOfPhoneNoAndUUIDs = workflowNotificationService.fetchUserUUIDs(mobileNumbers, waterConnectionRequest.getRequestInfo(),
+					property.getTenantId());
+			if (CollectionUtils.isEmpty(mapOfPhoneNoAndUUIDs.keySet())) {
+				log.info("UUID search failed!");
 			}
-			List<String> toUsers = new ArrayList<>();
-			toUsers.add(mapOfPhoneNoAndUUIDs.get(mobile));
-			Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
-			Action action = workflowNotificationService.getActionForEventNotification(mobileNumberAndMessage, mobile,
-					waterConnectionRequest, property);
-			events.add(Event.builder().tenantId(property.getTenantId())
-					.description(mobileNumberAndMessage.get(mobile)).eventType(WCConstants.USREVENTS_EVENT_TYPE)
-					.name(WCConstants.USREVENTS_EVENT_NAME).postedBy(WCConstants.USREVENTS_EVENT_POSTEDBY)
-					.source(Source.WEBAPP).recepient(recepient).eventDetails(null).actions(action).additionalDetails(additionalDetailsMap).build());
-		}
-		if (!CollectionUtils.isEmpty(events)) {
-			return EventRequest.builder().requestInfo(waterConnectionRequest.getRequestInfo()).events(events).build();
-		} else {
+			List<Event> events = new ArrayList<>();
+			for (String mobile : mobileNumbers) {
+				if (null == mapOfPhoneNoAndUUIDs.get(mobile) || null == mobileNumberAndMessage.get(mobile)) {
+					log.error("No UUID/SMS for mobile {} skipping event", mobile);
+					continue;
+				}
+				List<String> toUsers = new ArrayList<>();
+				toUsers.add(mapOfPhoneNoAndUUIDs.get(mobile));
+				Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
+				Action action = workflowNotificationService.getActionForEventNotification(mobileNumberAndMessage, mobile,
+						waterConnectionRequest, property);
+				events.add(Event.builder().tenantId(property.getTenantId())
+						.description(mobileNumberAndMessage.get(mobile)).eventType(WCConstants.USREVENTS_EVENT_TYPE)
+						.name(WCConstants.USREVENTS_EVENT_NAME).postedBy(WCConstants.USREVENTS_EVENT_POSTEDBY)
+						.source(Source.WEBAPP).recepient(recepient).eventDetails(null).actions(action).additionalDetails(additionalDetailsMap).build());
+			}
+			if (!CollectionUtils.isEmpty(events)) {
+				return EventRequest.builder().requestInfo(waterConnectionRequest.getRequestInfo()).events(events).build();
+			} else {
+				return null;
+			}
+		}else {
 			return null;
 		}
 
